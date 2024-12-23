@@ -1,0 +1,25 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "VariableDecl",
+      "id": "س",
+      "init": { "type": "Literal", "value": 10 }
+    },
+    {
+      "type": "IfStatement",
+      "test": {
+        "type": "BinaryExpression",
+        "operator": ">",
+        "left": { "type": "Identifier", "name": "س" },
+        "right": { "type": "Literal", "value": 5 }
+      },
+      "consequent": [
+        {
+          "type": "PrintStatement",
+          "expression": { "type": "Literal", "value": "\"س اكبر من 5\"" }
+        }
+      ]
+    }
+  ]
+}

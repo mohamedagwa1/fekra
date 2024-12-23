@@ -1,0 +1,92 @@
+
+<program> ::= <statement>*
+
+<statement> ::= <variable_decl> 
+              | <assignment> 
+              | <if_statement> 
+              | <while_statement>
+              | <function_decl>
+              | <function_call>
+              | <print>
+              | <return>
+              | <comment>
+
+<variable_decl> ::= "عرف" <identifier> ("=" <expression>)? ("؟")?
+<assignment> ::= <identifier> "=" <expression> ("؟")?
+
+<expression> ::= <logical_expr>
+<logical_expr> ::= <comparison_expr> (("&&" | "||") <comparison_expr>)* | "(" <logical_expr> ")"
+<comparison_expr> ::= <arith_expr> (<comparison_op> <arith_expr>)*
+<comparison_op> ::= "==" | "!=" | "<" | "<=" | ">" | ">=" | "===" | "!=="
+<arith_expr> ::= <term> (("+" | "-") <term>)*
+<term> ::= <factor> (("*" | "/") <factor>)*
+<factor> ::= <number> 
+           | <identifier> 
+           | "(" <expression> ")" 
+           | <string> 
+           | <function_call> 
+           | ("-" | "!") <factor>
+
+<if_statement> ::= "لو" "(" <logical_expr> ")" "{" <statement>* "}"
+<while_statement> ::= "بينما" "(" <logical_expr> ")" "{" <statement>* "}"
+
+<function_decl> ::= "دالة" <identifier> "(" (<identifier> ("," <identifier>)*)? ")" "{" <statement>* "}"
+<function_call> ::= <identifier> "(" (<expression> ("," <expression>)*)? ")" ("؟")?
+
+<print> ::= "عرض" "(" <expression> ")" "؟"
+<return> ::= "اعد" (<expression>)? "؟"
+
+<comment> ::= "//" [^\n]* 
+           | "/*" ([^*] | "*" [^/])* "*/"
+
+<identifier> ::= [ء-ي_][ء-ي0-9_]*  # Arabic-compatible identifiers
+<number> ::= [0-9]+ ("." [0-9]+)?
+<string> ::= '"' ([ء-يa-zA-Z0-9_ \t\n]|"\\"|"\n"|"\\t")* '"' 
+           | '"""' ([ء-يa-zA-Z0-9_ \t\n])* '"""'
+
+
+
+--------------------------------
+
+
+عرف س = "احمد" ؟
+
+عرف ص ؟
+
+ص = 10 ؟
+
+لو ( 4+5 < 10 || ص > 5 ) {
+	اطبع ("اهلا محمد")
+}
+
+بينما (ص < 15 ) {
+	ص = ص+1 ؟
+	اطبع ( ص) ؟
+}
+
+دالة الجمع (س , ص ) {
+	اعد (س + ص ) ؟
+}
+
+اطبع ( الجمع( 5, 4) )؟
+
+
+
+-------------------------------------------
+
+
+Include expected tokens, actual tokens, and position in the error message.
+Add context for unmatched braces or parentheses.
+Maintain a counter for braces and parentheses.
+Ensure the count is balanced by the end of the program.
+Ensure variables are declared before use.
+Validate function arguments during calls.
+Assign precedence levels to operators.
+Parse higher-precedence operators first.
+Nested functions.
+Assigning functions to variables for anonymous functions.
+Redundant declarations.
+Complex nested structures.
+Incorrect function calls.
+Skip tokens until a known synchronization point (e.g., ؟ or }).
+Continue parsing subsequent statements.
