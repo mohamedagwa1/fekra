@@ -34,6 +34,12 @@ class Parser:
             return self.parse_function_decl()
         elif token[0] == "KEYWORD" and token[1] == "عرض":
             return self.parse_print_statement()
+        elif token[0] == "IDENTIFIER":
+            return self.parse_assignment_or_function_call()
+        elif token[0] == "KEYWORD" and token[1] == "اعد":
+            return self.parse_return_statement()
+        elif token[0] == "COMMENT":
+            return self.parse_comment()
         else:
             raise SyntaxError(f"Unexpected token {token} at position {self.pos}")
 
@@ -46,6 +52,38 @@ class Parser:
             value = self.parse_expression()
         self.match("TERMINATOR")  # "؟"
         return {"type": "VariableDecl", "id": identifier[1], "init": value}
+    
+    # 1-7-2025
+    def parse_assignment_or_function_call(self):
+        identifier = self.match("IDENTIFIER")[1]
+        if self.current_token() and self.current_token()[0] == "OPERATOR" and self.current_token()[1] == "=":
+            # Assignment
+            self.match("OPERATOR")  # "="
+            value = self.parse_expression()
+            self.match("TERMINATOR")  # "؟"
+            return {"type": "Assignment", "id": identifier, "value": value}
+        elif self.current_token() and self.current_token()[0] == "LPAREN":
+            # Function call
+            return self.parse_function_call(identifier)
+        else:
+            raise SyntaxError(f"Expected assignment or function call at position {self.pos}")
+    
+    def parse_function_call(self, identifier):
+        self.match("LPAREN")
+        args = []
+        if self.current_token() and self.current_token()[0] != "RPAREN":
+            args.append(self.parse_expression())
+            while self.current_token() and self.current_token()[0] == "COMMA":
+                self.advance()
+                args.append(self.parse_expression())
+        self.match("RPAREN")
+        
+        if self.current_token() and self.current_token()[0] == "TERMINATOR":
+            self.match("TERMINATOR") 
+
+        return {"type": "FunctionCall", "callee": identifier, "arguments": args}
+
+    
 
     def parse_expression(self):
         return self.parse_logical_expr()
@@ -91,8 +129,11 @@ class Parser:
             self.advance()
             return {"type": "Literal", "value": token[1]}
         elif token[0] == "IDENTIFIER":
-            self.advance()
-            return {"type": "Identifier", "name": token[1]}
+            identifier = self.match("IDENTIFIER")[1]
+            if self.current_token() and self.current_token()[0] == "LPAREN":
+                return self.parse_function_call(identifier)
+            else:
+                return {"type": "Identifier", "name": identifier}
         elif token[0] == "LPAREN":
             self.advance()
             expr = self.parse_expression()
@@ -142,6 +183,21 @@ class Parser:
             body.append(self.parse_statement())
         self.match("RBRACE")
         return {"type": "FunctionDeclaration", "name": name, "params": params, "body": body}
+    
+    def parse_return_statement(self):
+        self.match("KEYWORD")
+        self.match("LPAREN") 
+        value = None
+        if self.current_token() and self.current_token()[0] != "RPAREN":
+            value = self.parse_expression()
+        self.match("RPAREN")  
+        self.match("TERMINATOR")  
+        return {"type": "ReturnStatement", "value": value}
+
+    
+    def parse_comment(self):
+        comment = self.match("COMMENT")
+        return {"type": "Comment", "value": comment[1]}
 
     def parse_print_statement(self):
         self.match("KEYWORD")  # "عرض"
@@ -150,3 +206,4 @@ class Parser:
         self.match("RPAREN")
         self.match("TERMINATOR")
         return {"type": "PrintStatement", "expression": expr}
+    
