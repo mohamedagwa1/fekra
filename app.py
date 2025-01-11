@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS 
 from lexer import lexer
 from parser import Parser
 from semantic_analyzer import SemanticAnalyzer
@@ -8,6 +9,8 @@ from target_code_generator import TargetCodeGenerator
 from virtual_machine import VirtualMachine
 
 app = Flask(__name__)
+
+CORS(app)
 
 @app.route('/run', methods=['POST'])
 def run_code():
@@ -38,8 +41,8 @@ def run_code():
         ir_code = icg.generate()
         
         # Step 5: Optimize Intermediate Code
-        optimizer = Optimizer(ir_code)
-        optimized_code = optimizer.optimize()
+        # optimizer = Optimizer(ir_code)
+        # optimized_code = optimizer.optimize()
         
         # Step 6: Generate Target Code
         tcg = TargetCodeGenerator(ir_code)
@@ -54,7 +57,6 @@ def run_code():
             "tokens": tokens,
             "ast": ast,
             "ir_code": ir_code,
-            "optimized_code": optimized_code,
             "target_code": target_code,
             "output": output
         }), 200
