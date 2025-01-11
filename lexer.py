@@ -1,9 +1,16 @@
 import re
 
-# Lexer Configuration
-KEYWORDS = {"عرف", "لو", "بينما", "دالة", "عرض", "اعد", "؟", "//", "/*", "*/"}
-COMPARISON_OPS = {"==", "!=", "<", "<=", ">", ">=", "===", "!=="}
-OPERATORS = {"+", "-", "*", "/", "&&", "||", "!", "="}
+KEYWORDS = {
+    "عرف", "لو", "بينما", "دالة", "عرض", "اعد", "؟", "//", "/*", "*/"
+}
+
+COMPARISON_OPS = {
+    "==", "!=", "<", "<=", ">", ">=", "===", "!=="
+}
+
+OPERATORS = {
+    "+", "-", "*", "/", "&&", "||", "!", "="
+}
 
 token_specification = [
     ('COMMENT', r'//[^\n]*|/\*.*?\*/'), 
@@ -26,6 +33,7 @@ token_specification = [
 
 master_pattern = '|'.join(f'(?P<{pair[0]}>{pair[1]})' for pair in token_specification)
 
+
 def lexer(code):
     line_num = 1
     line_start = 0
@@ -37,15 +45,39 @@ def lexer(code):
 
         if kind == 'SKIP':
             continue
-        elif kind in ['COMMENT', 'KEYWORD', 'IDENTIFIER', 'NUMBER', 'STRING', 
-                      'COMPARISON_OP', 'OPERATOR', 'LPAREN', 'RPAREN', 
-                      'LBRACE', 'RBRACE', 'COMMA', 'TERMINATOR']:
-            tokens.append((kind, value))
+        elif kind == 'COMMENT':
+            tokens.append(('COMMENT', value))
+        elif kind == 'KEYWORD':
+            tokens.append(('KEYWORD', value))
+        elif kind == 'IDENTIFIER':
+            tokens.append(('IDENTIFIER', value))
+        elif kind == 'NUMBER':
+            tokens.append(('NUMBER', value))
+        elif kind == 'STRING':
+            tokens.append(('STRING', value))
+        elif kind == 'COMPARISON_OP':
+            tokens.append(('COMPARISON_OP', value))
+        elif kind == 'OPERATOR':
+            tokens.append(('OPERATOR', value))
+        elif kind == 'LPAREN':
+            tokens.append(('LPAREN', value))
+        elif kind == 'RPAREN':
+            tokens.append(('RPAREN', value))
+        elif kind == 'LBRACE':
+            tokens.append(('LBRACE', value))
+        elif kind == 'RBRACE':
+            tokens.append(('RBRACE', value))
+        elif kind == 'COMMA':
+            tokens.append(('COMMA', value))
+        elif kind == 'TERMINATOR':
+            tokens.append(('TERMINATOR', value))
         elif kind == 'NEWLINE':
             line_num += 1
             line_start = mo.end()
         elif kind == 'MISMATCH':
             raise RuntimeError(
-                f'Unexpected character {value!r} at line {line_num}, column {column + 1}'
+                f'start Unexpected character {value!r} at line {line_num}, column {column + 1} end'
             )
+
     return tokens
+
