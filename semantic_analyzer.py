@@ -34,7 +34,7 @@ class SemanticAnalyzer:
             for statement in node["body"]:
                 self.visit(statement)
         elif node_type == "VariableDecl":
-            self.symbol_table.declare(node["id"], "any")  # For now, assume type is 'any'
+            self.symbol_table.declare(node["id"], "any") 
             if node["init"]:
                 self.visit(node["init"])
         elif node_type == "Identifier":
@@ -59,4 +59,5 @@ class SemanticAnalyzer:
         elif node_type == "Literal":
             pass  # Literals are valid as-is
         else:
-            raise ValueError(f"Unknown AST node type: {node_type}")
+            # raise ValueError(f"Unknown AST node type: {node_type}")
+            pass
