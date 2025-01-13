@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS 
+#from flask_cors import CORS 
 from lexer import lexer
 from parser import Parser
 from semantic_analyzer import SemanticAnalyzer
@@ -10,7 +10,7 @@ from virtual_machine import VirtualMachine
 
 app = Flask(__name__)
 
-CORS(app)
+#CORS(app)
 
 @app.route('/run', methods=['POST'])
 def run_code():
@@ -66,5 +66,5 @@ def run_code():
 
 if __name__ == "__main__":
     # Use the PORT environment variable provided by Render, default to 5000 locally
-    port = int(os.environ.get("PORT", 5000))
+    #port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
