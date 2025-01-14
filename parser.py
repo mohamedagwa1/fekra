@@ -64,7 +64,10 @@ class Parser:
             return {"type": "Assignment", "id": identifier, "value": value}
         elif self.current_token() and self.current_token()[0] == "LPAREN":
             # Function call
-            return self.parse_function_call(identifier)
+            # return self.parse_function_call(identifier)
+            value = self.parse_function_call(identifier)
+            self.match("TERMINATOR")
+            return value
         else:
             raise SyntaxError(f"Expected assignment or function call at position {self.pos}")
     
@@ -78,8 +81,8 @@ class Parser:
                 args.append(self.parse_expression())
         self.match("RPAREN")
         
-        if self.current_token() and self.current_token()[0] == "TERMINATOR":
-            self.match("TERMINATOR") 
+        # if self.current_token() and self.current_token()[0] == "TERMINATOR":
+        #     self.match("TERMINATOR") 
 
         return {"type": "FunctionCall", "callee": identifier, "arguments": args}
 
